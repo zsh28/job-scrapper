@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Job Board Aggregator
 
-## Getting Started
+Search multiple ATS job boards with human-friendly filters. The UI builds a Google query behind the scenes, then enriches results by parsing JSON-LD JobPosting data for dates, company, and location.
 
-First, run the development server:
+## Setup
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create `.env.local` and add your Browserless websocket endpoint (for Playwright fallback on Vercel):
+
+```env
+PLAYWRIGHT_WS_ENDPOINT=wss://chrome.browserless.io?token=YOUR_TOKEN
+```
+
+## Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+GET `/api/jobs`
 
-## Learn More
+Query params:
 
-To learn more about Next.js, take a look at the following resources:
+- `domains`: comma-separated list of job board domains
+- `q`: Google query string built from UI filters
+- `after`: `YYYY-MM-DD` (optional Google operator)
+- `max`: results per domain (default 20)
+- `fetchDetails`: `true|false` (default false)
+- `concurrency`: number of concurrent fetches (default 6)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Example:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+/api/jobs?domains=ashbyhq.com,jobs.lever.co&q=(backend%20remote%20EMEA)%20-intitle:closed&after=2026-01-01&max=20
+```
 
-## Deploy on Vercel
+## Vercel notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Google HTML scraping is attempted first.
+- If Google blocks, Playwright connects to Browserless via `PLAYWRIGHT_WS_ENDPOINT`.
+- Serverless caches responses for ~2 minutes to reduce re-scraping.
