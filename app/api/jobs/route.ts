@@ -29,7 +29,10 @@ export async function GET(req: Request) {
   const after = searchParams.get("after") || undefined;
   const max = Number(searchParams.get("max") || 20);
   const fetchDetails = searchParams.get("fetchDetails") === "true";
-  const concurrency = Number(searchParams.get("concurrency") || 2);
+  const requestedConcurrency = Number(searchParams.get("concurrency") || 2);
+  const concurrency = Number.isFinite(requestedConcurrency)
+    ? Math.min(Math.max(requestedConcurrency, 1), 2)
+    : 2;
 
   const cacheKey = searchParams.toString();
   const cached = cache.get(cacheKey);
@@ -66,12 +69,12 @@ export async function GET(req: Request) {
       afterDate: after,
       maxPerDomainQuery: max,
       fetchDetails,
-      fetchConcurrency: 1,
-      searchConcurrency: 1,
-      searchTimeoutMs: 20000,
+      fetchConcurrency: concurrency,
+      searchConcurrency: concurrency,
+      searchTimeoutMs: 10000,
       searchDelayMs: 1200,
-      maxDurationMs: 45000,
-      timeoutMs: 12000,
+      maxDurationMs: 25000,
+      timeoutMs: 8000,
       usePlaywrightFallback: true,
       playwrightWsEndpoint: process.env.PLAYWRIGHT_WS_ENDPOINT,
       onQuery: (info) => {

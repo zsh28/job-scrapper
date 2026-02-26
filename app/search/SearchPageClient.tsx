@@ -268,7 +268,7 @@ export default function SearchPageClient() {
       if (afterDate) params.set("after", afterDate);
       params.set("max", String(maxPerDomain));
       params.set("fetchDetails", enrichDetails ? "true" : "false");
-      params.set("concurrency", enrichDetails ? "4" : "6");
+      params.set("concurrency", "2");
 
       const res = await fetch(`/api/jobs?${params.toString()}`);
       const json = await res.json();
