@@ -22,7 +22,7 @@ PLAYWRIGHT_WS_ENDPOINT=wss://chrome.browserless.io?token=YOUR_TOKEN
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3000` and click "Open search" to use the table UI at `/search`.
 
 ## API
 

@@ -14,6 +14,7 @@ export type SearchOptions = {
   fetchConcurrency?: number;
   searchConcurrency?: number;
   searchTimeoutMs?: number;
+  searchDelayMs?: number;
   maxDurationMs?: number;
   timeoutMs?: number;
   usePlaywrightFallback?: boolean;
@@ -48,6 +49,9 @@ export async function searchJobs(opts: SearchOptions = {}): Promise<JobResult[]>
       searchTasks.push(
         searchLimiter(async () => {
           try {
+            if (opts.searchDelayMs) {
+              await delay(opts.searchDelayMs);
+            }
             const results = await runQueryWithRetry(sourceQuery, {
               count: max,
               timeoutMs: opts.timeoutMs ?? 12000,

@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import type { AnyNode } from "domhandler";
 import { chromium } from "playwright";
 import { SearchHit } from "./types";
 
@@ -52,7 +53,7 @@ export async function googleSearch(
   try {
     const playwrightHtml = await withTimeout(
       fetchWithPlaywright(url.toString(), options.playwrightWsEndpoint),
-      20000
+      12000
     );
     if (debug) {
       console.info("[jobs:google] playwright fallback used");
@@ -137,7 +138,7 @@ function parseGoogleHtml(html: string): SearchHit[] {
   const results: SearchHit[] = [];
 
   // Primary: classic result blocks
-  $("#search .tF2Cxc, #search .g").each((_: number, el: any) => {
+  $("#search .tF2Cxc, #search .g").each((_: number, el: AnyNode) => {
     const anchor = $(el).find("a").first();
     const h3 = $(el).find("h3").first();
     const href = anchor.attr("href") || "";
@@ -150,7 +151,7 @@ function parseGoogleHtml(html: string): SearchHit[] {
 
   // Fallback: any anchor with h3 in search results
   if (results.length === 0) {
-    $("#search a, #rso a").each((_: number, el: any) => {
+    $("#search a, #rso a").each((_: number, el: AnyNode) => {
       const h3 = $(el).find("h3");
       if (!h3.length) return;
 
@@ -182,7 +183,7 @@ function normalizeGoogleUrl(href: string) {
   return "";
 }
 
-function extractSnippet(container: cheerio.Cheerio<any>) {
+function extractSnippet(container: cheerio.Cheerio<AnyNode>) {
   if (!container || container.length === 0) return undefined;
   const snippet =
     container.find("div.VwiC3b").first().text().trim() ||
