@@ -29,7 +29,7 @@ export async function GET(req: Request) {
   const after = searchParams.get("after") || undefined;
   const max = Number(searchParams.get("max") || 20);
   const fetchDetails = searchParams.get("fetchDetails") === "true";
-  const concurrency = Number(searchParams.get("concurrency") || 6);
+  const concurrency = Number(searchParams.get("concurrency") || 2);
 
   const cacheKey = searchParams.toString();
   const cached = cache.get(cacheKey);
@@ -66,7 +66,7 @@ export async function GET(req: Request) {
       afterDate: after,
       maxPerDomainQuery: max,
       fetchDetails,
-      fetchConcurrency: concurrency,
+      fetchConcurrency: 1,
       searchConcurrency: 1,
       searchTimeoutMs: 20000,
       searchDelayMs: 1200,

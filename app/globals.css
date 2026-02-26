@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #f6f4ef;
   --foreground: #111827;
+}
+
+.dark {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
 }
 
 @theme inline {
@@ -11,15 +18,45 @@
   --font-sans: var(--font-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0c1114;
-    --foreground: #f8fafc;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+body.theme-transition * {
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+body.theme-transition::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: var(--background);
+  z-index: 9999;
+  animation: theme-fade 220ms ease forwards;
+}
+
+@keyframes theme-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+* {
+  border-color: color-mix(in srgb, var(--foreground) 12%, transparent);
 }

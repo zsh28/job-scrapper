@@ -41,6 +41,18 @@ const typingPhrases = [
   "backend roles",
   "AI roles",
   "remote roles",
+  "design roles",
+  "product roles",
+  "data roles",
+  "security roles",
+  "go-to-market roles",
+  "sales roles",
+  "marketing roles",
+  "operations roles",
+  "finance roles",
+  "legal roles",
+  "people roles",
+  "customer success roles",
 ];
 
 export default function Home() {
@@ -87,8 +99,8 @@ export default function Home() {
   const displayText = reduceMotion ? currentPhrase : typed;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#eef2ff,transparent_45%),radial-gradient(circle_at_bottom_right,#e2e8f0,transparent_40%),linear-gradient(180deg,#f8fafc,#ffffff)]">
-      <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-4 py-14 sm:px-6">
+    <div className="bg-transparent">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-14 sm:px-6">
         <motion.section
           variants={container}
           initial="hidden"
@@ -96,27 +108,28 @@ export default function Home() {
           className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]"
         >
           <div className="space-y-6">
-            <motion.div variants={item} className="flex flex-wrap gap-2">
+            <motion.div
+              variants={item}
+              className="flex flex-wrap items-center gap-2"
+            >
               <Badge variant="secondary">Google SERP + ATS</Badge>
               <Badge variant="secondary">Browserless fallback</Badge>
               <Badge variant="secondary">JSON-LD dates</Badge>
             </motion.div>
             <motion.h1
               variants={item}
-              className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl"
+              className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-slate-100"
             >
               Find real job posts fast. Filter in plain English.
             </motion.h1>
             <motion.div
               variants={item}
-              className="text-lg font-medium text-slate-700"
+              className="text-lg font-medium text-slate-700 dark:text-slate-300"
             >
-              Search for <span className="text-slate-900">{displayText}</span>
-              {!reduceMotion ? (
-                <span className="ml-1 inline-block h-5 w-px translate-y-1 bg-slate-400 align-middle" />
-              ) : null}
+              Search for <span className="text-slate-900 dark:text-slate-100">{displayText}</span>
+              {null}
             </motion.div>
-            <motion.p variants={item} className="text-lg text-slate-600">
+            <motion.p variants={item} className="text-lg text-slate-600 dark:text-slate-400">
               Job Board aggregates ATS listings using Google-style queries, then
               enriches results with structured data so you can sort by freshness
               and focus on real openings.
@@ -141,21 +154,21 @@ export default function Home() {
 
           <motion.div
             variants={item}
-            className="grid gap-4 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg"
+            className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg dark:border-slate-800 dark:bg-slate-900"
           >
-            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
               What it does
             </div>
             <div className="grid gap-4">
               {features.map((feature) => (
                 <div
                   key={feature.title}
-                  className="rounded-xl border border-slate-200 bg-white p-4"
+                  className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
                 >
-                  <div className="text-sm font-semibold text-slate-900">
+                  <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {feature.title}
                   </div>
-                  <div className="text-sm text-slate-600">
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
                     {feature.description}
                   </div>
                 </div>
@@ -174,10 +187,10 @@ export default function Home() {
             <motion.div
               key={label}
               variants={item}
-              className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm"
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
             >
               <div className="text-sm font-semibold text-slate-900">{label}</div>
-              <div className="mt-2 text-sm text-slate-600">
+              <div className="mt-2 text-sm text-slate-600 dark:text-slate-400">
                 Built to keep searches readable, reduce noise, and surface roles
                 with reliable metadata.
               </div>

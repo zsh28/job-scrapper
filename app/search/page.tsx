@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 type JobResult = {
   id: string;
@@ -273,10 +275,17 @@ export default function SearchPage() {
       if (!res.ok) {
         throw new Error(json?.error || `Search error ${res.status}`);
       }
-      setResults(Array.isArray(json.results) ? json.results : []);
+      const nextResults = Array.isArray(json.results) ? json.results : [];
+      setResults(nextResults);
+      toast.success("Search complete", {
+        description: `${nextResults.length} roles found across ${combinedDomains.length} domains.`,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Search failed");
       setResults([]);
+      toast.error("Search failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
     } finally {
       setLoading(false);
     }
@@ -301,7 +310,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="bg-transparent">
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
         <motion.section
           variants={container}
@@ -310,14 +319,25 @@ export default function SearchPage() {
           className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div>
-            <h1 className="text-3xl font-semibold text-slate-900">Job search</h1>
-            <p className="text-sm text-slate-600">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                Job search
+              </h1>
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Filters on the left, results in a sortable table.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button onClick={runSearch} disabled={loading} className="w-full sm:w-auto">
-              {loading ? "Searching..." : "Run search"}
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Searching...
+                </span>
+              ) : (
+                "Run search"
+              )}
             </Button>
             <Button
               variant="outline"
@@ -331,7 +351,7 @@ export default function SearchPage() {
         </motion.section>
 
         {error ? (
-          <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/60 dark:text-rose-200">
             {error}
           </div>
         ) : null}
@@ -344,7 +364,7 @@ export default function SearchPage() {
         >
           <motion.aside
             variants={item}
-            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
           >
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-slate-900">Filters</h2>
@@ -356,7 +376,9 @@ export default function SearchPage() {
                   }
                   id="remote"
                 />
-                <Label htmlFor="remote">Remote</Label>
+                <Label htmlFor="remote" className="text-slate-700 dark:text-slate-300">
+                  Remote
+                </Label>
               </div>
             </div>
 
@@ -464,9 +486,9 @@ export default function SearchPage() {
                   }}
                   rows={4}
                 />
-                <div className="text-xs text-slate-500">
-                  {afterDate ? `Auto after:${afterDate}` : "No after filter"}
-                </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">
+              {afterDate ? `Auto after:${afterDate}` : "No after filter"}
+            </div>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -480,7 +502,7 @@ export default function SearchPage() {
                 </Button>
               </div>
             ) : (
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-slate-500 dark:text-slate-400">
                 Summary hidden. Use “Show summary” to view/edit the query.
               </div>
             )}
@@ -488,12 +510,12 @@ export default function SearchPage() {
 
           <motion.section
             variants={item}
-            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-1">
                 <h2 className="text-lg font-semibold text-slate-900">Results</h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {filteredResults.length} roles • {combinedDomains.length} domains
                 </p>
               </div>
@@ -538,7 +560,7 @@ export default function SearchPage() {
                   {DEFAULT_DOMAINS.map((domain) => (
                     <label
                       key={domain}
-                      className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                      className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 dark:border-slate-800 dark:text-slate-300"
                     >
                       <Checkbox
                         checked={selectedDomains.includes(domain)}
@@ -568,10 +590,10 @@ export default function SearchPage() {
                     onChange={(e) => setMaxPerDomain(Number(e.target.value))}
                   />
                 </div>
-                <div className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2 text-sm">
+                <div className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2 text-sm dark:border-slate-800">
                   <div>
                     <Label>Enrich details</Label>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Adds date/company/location
                     </p>
                   </div>
@@ -589,11 +611,11 @@ export default function SearchPage() {
 
             <div className="grid gap-3 md:hidden">
               {loading ? (
-                <div className="rounded-md border border-slate-200 p-4 text-sm text-slate-500">
+                <div className="rounded-md border border-slate-200 p-4 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
                   Searching... this can take a few seconds.
                 </div>
               ) : filteredResults.length === 0 ? (
-                <div className="rounded-md border border-slate-200 p-4 text-sm text-slate-500">
+                <div className="rounded-md border border-slate-200 p-4 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
                   No results yet. Broaden keywords or try fewer exclusions.
                 </div>
               ) : (
@@ -601,13 +623,13 @@ export default function SearchPage() {
                   <motion.div
                     key={job.id}
                     variants={item}
-                    className="rounded-lg border border-slate-200 p-4"
+                    className="rounded-lg border border-slate-200 p-4 dark:border-slate-800"
                   >
                     <div className="space-y-2">
-                      <div className="text-sm font-semibold text-slate-900">
+                      <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                         {job.title}
                       </div>
-                      <div className="flex flex-wrap gap-2 text-xs text-slate-500">
+                      <div className="flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
                         <Badge variant="secondary">{job.domain}</Badge>
                         {job.company ? (
                           <Badge variant="outline">{job.company}</Badge>
@@ -625,7 +647,7 @@ export default function SearchPage() {
                         href={job.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex text-xs font-semibold text-slate-900 underline underline-offset-4"
+                        className="inline-flex text-xs font-semibold text-slate-900 underline underline-offset-4 dark:text-slate-100"
                       >
                         Open role
                       </a>
@@ -650,20 +672,20 @@ export default function SearchPage() {
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-slate-500">
+                      <TableCell colSpan={6} className="text-slate-500 dark:text-slate-400">
                         Searching... this can take a few seconds.
                       </TableCell>
                     </TableRow>
                   ) : filteredResults.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-slate-500">
+                      <TableCell colSpan={6} className="text-slate-500 dark:text-slate-400">
                         No results yet. Broaden keywords or try fewer exclusions.
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredResults.map((job) => (
                       <TableRow key={job.id}>
-                        <TableCell className="font-medium text-slate-900">
+                        <TableCell className="font-medium text-slate-900 dark:text-slate-100">
                           {job.title}
                         </TableCell>
                         <TableCell>{job.company || "—"}</TableCell>
@@ -675,7 +697,7 @@ export default function SearchPage() {
                             href={job.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-slate-900 underline underline-offset-4"
+                            className="text-slate-900 underline underline-offset-4 dark:text-slate-100"
                           >
                             Open
                           </a>
